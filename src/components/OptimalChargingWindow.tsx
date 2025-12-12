@@ -27,7 +27,13 @@ export const OptimalChargingWindow: React.FC = () => {
       setError(null);
 
       const response = await fetch(
-        `/api/Mix/optimal-charging-window?windowHours=${hours}`
+        `https://greenstackapi.onrender.com/api/Mix/optimal-charging-window?windowHours=${hours}`,
+        {
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       if (!response.ok) {

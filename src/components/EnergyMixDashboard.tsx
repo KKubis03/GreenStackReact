@@ -14,7 +14,15 @@ const EnergyMixDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/Mix/three-days-averages");
+        const response = await fetch(
+          "https://greenstackapi.onrender.com/api/Mix/three-days-averages",
+          {
+            mode: "cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
