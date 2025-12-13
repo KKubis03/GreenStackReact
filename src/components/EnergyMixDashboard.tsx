@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import type { ApiResponse } from "../helpers/types";
 import { DayCard } from "./DayCard";
+import { API_BASE_URL } from "../helpers/constants";
 import "../styles/EnergyMixDashboard.css";
-
-// --- Główny Komponent Aplikacji ---
 
 const EnergyMixDashboard: React.FC = () => {
   const [daysData, setDaysData] = useState<ApiResponse[]>([]);
@@ -14,15 +13,12 @@ const EnergyMixDashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "https://greenstackapi.onrender.com/api/Mix/three-days-averages",
-          {
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}three-days-averages`, {
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

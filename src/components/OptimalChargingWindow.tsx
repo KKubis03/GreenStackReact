@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Battery, Zap } from "lucide-react";
 import "../styles/OptimalChargingWindow.css";
-
-interface ChargingWindowResponse {
-  start: string;
-  end: string;
-  averageCleanEnergyPercentage: number;
-}
+import type { ChargingWindowResponse } from "../helpers/types";
+import { API_BASE_URL } from "../helpers/constants";
 
 export const OptimalChargingWindow: React.FC = () => {
   const [hours, setHours] = useState<number>(1);
@@ -27,7 +23,7 @@ export const OptimalChargingWindow: React.FC = () => {
       setError(null);
 
       const response = await fetch(
-        `https://greenstackapi.onrender.com/api/Mix/optimal-charging-window?windowHours=${hours}`,
+        `${API_BASE_URL}optimal-charging-window?windowHours=${hours}`,
         {
           mode: "cors",
           headers: {
@@ -136,7 +132,7 @@ export const OptimalChargingWindow: React.FC = () => {
                   Średni udział czystej energii:
                 </span>
                 <span className="charging-window-result-value-highlight">
-                  {result.averageCleanEnergyPercentage.toFixed(2)}%
+                  {result.averageCleanEnergyPercentage}%
                 </span>
               </div>
             </div>

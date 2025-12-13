@@ -1,13 +1,10 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { Leaf } from "lucide-react";
-import type { ApiResponse } from "../helpers/types";
+import type { DayCardProps } from "../helpers/types";
 import { COLORS, FUEL_NAMES } from "../helpers/constants";
+import { renderChartLegend } from "./ChartLegend";
 import "../styles/EnergyMixDashboard.css";
-
-interface DayCardProps {
-  dayInfo: ApiResponse;
-}
 
 export const DayCard: React.FC<DayCardProps> = ({ dayInfo }) => {
   const date = new Date(dayInfo.date);
@@ -25,16 +22,18 @@ export const DayCard: React.FC<DayCardProps> = ({ dayInfo }) => {
   else if (diffDays === 2) label = "Pojutrze";
   else label = date.toLocaleDateString("pl-PL");
 
-  const chartData = dayInfo.averageMix.map((fuel) => ({
-    name: FUEL_NAMES[fuel.fuel] || fuel.fuel,
-    value: fuel.perc,
-  }));
+  const chartData = dayInfo.averageMix
+    .map((fuel) => ({
+      name: FUEL_NAMES[fuel.fuel] || fuel.fuel,
+      value: fuel.perc,
+      fuelKey: fuel.fuel,
+    }))
+    .sort((a, b) => b.value - a.value);
 
   return (
     <div className="energy-dashboard-card">
       <h3 className="energy-dashboard-card-title">{label}</h3>
 
-      {/* Sekcja: Informacja o czystej energii */}
       <div className="energy-dashboard-clean-energy-container">
         <Leaf size={20} color="#10B981" />
         <span className="energy-dashboard-clean-energy-text">
@@ -42,10 +41,9 @@ export const DayCard: React.FC<DayCardProps> = ({ dayInfo }) => {
         </span>
       </div>
 
-      {/* Sekcja: Wykres */}
-      <div style={{ width: "100%", height: "300px" }}>
+      <div style={{ width: "100%", height: "auto" }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <PieChart width={300} height={300}>
+          <PieChart width={300} height={450}>
             <Pie
               data={chartData}
               cx="50%"
@@ -56,15 +54,13 @@ export const DayCard: React.FC<DayCardProps> = ({ dayInfo }) => {
               dataKey="value"
             >
               {chartData.map((entry, index) => {
-                const fuelKey =
-                  Object.keys(FUEL_NAMES).find(
-                    (key) => FUEL_NAMES[key] === entry.name
-                  ) || "other";
-                return <Cell key={`cell-${index}`} fill={COLORS[fuelKey]} />;
+                return (
+                  <Cell key={`cell-${index}`} fill={COLORS[entry.fuelKey]} />
+                );
               })}
             </Pie>
             <Tooltip formatter={(value: number) => `${value}%`} />
-            <Legend verticalAlign="bottom" height={50} />
+            <Legend content={renderChartLegend} />
           </PieChart>
         </div>
       </div>
